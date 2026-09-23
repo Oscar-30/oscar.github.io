@@ -1,0 +1,30 @@
+---
+// ============================================================
+// SOBRE MÍ: párrafos de presentación.
+// ============================================================
+import type { Content } from '../data/types';
+
+interface Props {
+  about: Content['about'];
+}
+
+const { about } = Astro.props;
+---
+
+<section class="section" id="about">
+  <div class="container section__grid">
+    <h2 class="section__title">{about.title}</h2>
+    <div class="about">
+      {about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .about {
+    display: grid;
+    gap: 1.1rem;
+    max-width: 40rem;
+    font-size: 1.15rem;
+  }
+</style>
