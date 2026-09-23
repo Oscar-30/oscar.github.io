@@ -1,0 +1,70 @@
+---
+// ============================================================
+// PLANTILLA BASE
+// Es el "esqueleto" de la página: <html>, <head> y <body>.
+// Todo lo que va dentro de <slot /> lo pone la página que
+// usa esta plantilla (como @RenderBody() en un _Layout de .NET).
+// ============================================================
+import '../styles/global.css';
+import type { Lang } from '../data/types';
+
+// Props: los "parámetros" que recibe este componente.
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+}
+
+const { lang, title, description } = Astro.props;
+
+// URLs de la versión en cada idioma, para que Google sepa que existen ambas.
+const esUrl = new URL('/', Astro.site);
+const enUrl = new URL('/en/', Astro.site);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Idiomas alternativos (SEO) -->
+    <link rel="alternate" hreflang="es" href={esUrl} />
+    <link rel="alternate" hreflang="en" href={enUrl} />
+
+    <!-- Vista previa al compartir el enlace en redes -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+
+    <!-- Tipografías de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400..700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!--
+      Script del tema. Va en el <head> y con is:inline para que
+      se ejecute ANTES de pintar la página y no haya un "parpadeo"
+      blanco al cargar en modo oscuro.
+    -->
+    <script is:inline>
+      (function () {
+        let theme = null;
+        try { theme = localStorage.getItem('theme'); } catch (e) {}
+        if (!theme) {
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

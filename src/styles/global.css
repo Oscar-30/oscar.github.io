@@ -1,0 +1,147 @@
+/* ============================================================
+   ESTILOS GLOBALES
+   Aquí están los colores, tipografías y reglas que comparte
+   toda la web. Cada componente tiene además sus propios
+   estilos dentro de su fichero .astro.
+   ============================================================ */
+
+/* ---------- Colores (modo claro) ----------
+   Son "variables" de CSS. Si cambias un valor aquí, cambia
+   en toda la web. Prueba, por ejemplo, otro --accent. */
+:root {
+  --bg: #f6f7fb;          /* fondo de la página */
+  --surface: #ffffff;     /* fondo de bloques destacados */
+  --ink: #151a2e;         /* texto principal */
+  --muted: #5b6178;       /* texto secundario */
+  --line: #d9dce8;        /* bordes y separadores */
+  --accent: #4b2fd0;      /* color de marca (enlaces, detalles) */
+  --accent-soft: #ece8ff; /* fondo suave del color de marca */
+
+  --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Instrument Sans', 'Segoe UI', system-ui, sans-serif;
+
+  --max-width: 70rem;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+
+  color-scheme: light;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ---------- Colores (modo oscuro) ----------
+   Se aplican cuando el script de BaseLayout pone
+   data-theme="dark" en la etiqueta <html>. */
+:root[data-theme='dark'] {
+  --bg: #0f1226;
+  --surface: #171b34;
+  --ink: #e8eaf4;
+  --muted: #9ca2bd;
+  --line: #2a2f4f;
+  --accent: #a897ff;
+  --accent-soft: #242052;
+  color-scheme: dark;
+}
+
+/* ---------- Reset básico ---------- */
+*, *::before, *::after { box-sizing: inherit; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(5rem + env(safe-area-inset-top, 0px));
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  line-height: 1.1;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+p { margin: 0; }
+
+a { color: var(--accent); text-underline-offset: 0.2em; }
+
+img { max-width: 100%; display: block; }
+
+ul { margin: 0; padding: 0; list-style: none; }
+
+/* Contorno visible al navegar con teclado (accesibilidad) */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---------- Utilidades reutilizables ---------- */
+
+/* Centra el contenido y limita su anchura */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Estructura de cada sección: título a la izquierda, contenido a la derecha */
+.section {
+  padding-block: clamp(3.5rem, 8vw, 6rem);
+  border-top: 1px solid var(--line);
+}
+
+.section__grid {
+  display: grid;
+  gap: 1.5rem 3rem;
+}
+
+@media (min-width: 52rem) {
+  .section__grid { grid-template-columns: 13rem 1fr; }
+}
+
+.section__title {
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 700;
+}
+
+/* Etiquetas de tecnologías */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.tags li {
+  font-size: 0.85rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+/* Texto solo para lectores de pantalla */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0;
+}
+
+/* Respeta a quien pide menos animaciones en su sistema */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

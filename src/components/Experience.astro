@@ -1,0 +1,112 @@
+---
+// ============================================================
+// EXPERIENCIA: línea temporal con tus trabajos.
+// Recorre la lista "jobs" y pinta un bloque por cada uno
+// (como un foreach en C#).
+// ============================================================
+import type { Content } from '../data/types';
+
+interface Props {
+  experience: Content['experience'];
+}
+
+const { experience } = Astro.props;
+---
+
+<section class="section" id="experience">
+  <div class="container section__grid">
+    <h2 class="section__title">{experience.title}</h2>
+
+    <ol class="timeline">
+      {experience.jobs.map((job) => (
+        <li class="job">
+          <p class="job__dates">{job.start} – {job.end}</p>
+          <div class="job__body">
+            <h3 class="job__role">{job.role}</h3>
+            <p class="job__company">{job.company}, {job.location}</p>
+            <p class="job__summary">{job.summary}</p>
+            <ul class="job__highlights">
+              {job.highlights.map((item) => <li>{item}</li>)}
+            </ul>
+            <ul class="tags">
+              {job.tech.map((t) => <li>{t}</li>)}
+            </ul>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2.75rem;
+  }
+
+  .job {
+    position: relative;
+    display: grid;
+    gap: 0.5rem 2rem;
+    padding-left: 1.75rem;
+  }
+
+  /* La línea vertical de la línea temporal */
+  .job::before {
+    content: '';
+    position: absolute;
+    left: 0.3rem;
+    top: 0.5rem;
+    bottom: -2.75rem;
+    width: 2px;
+    background: var(--line);
+  }
+
+  .job:last-child::before { bottom: 0; }
+
+  /* El punto de cada trabajo */
+  .job::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--accent);
+  }
+
+  .job:first-child::after { background: var(--accent); }
+
+  .job__dates {
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .job__role { font-size: 1.35rem; font-weight: 700; }
+
+  .job__company { color: var(--muted); margin-top: 0.2rem; }
+
+  .job__summary { margin-top: 0.85rem; max-width: 40rem; }
+
+  .job__highlights {
+    list-style: disc;
+    padding-left: 1.2rem;
+    margin: 0.75rem 0 1rem;
+    display: grid;
+    gap: 0.35rem;
+    max-width: 40rem;
+  }
+
+  .job__highlights li::marker { color: var(--accent); }
+
+  /* En pantallas anchas, las fechas van a la izquierda de cada trabajo */
+  @media (min-width: 40rem) {
+    .job { grid-template-columns: 9rem 1fr; }
+  }
+</style>

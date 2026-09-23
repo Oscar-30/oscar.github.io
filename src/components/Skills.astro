@@ -1,0 +1,50 @@
+---
+// ============================================================
+// HABILIDADES: grupos de tecnologías por categoría.
+// ============================================================
+import type { Content } from '../data/types';
+
+interface Props {
+  skills: Content['skills'];
+}
+
+const { skills } = Astro.props;
+---
+
+<section class="section" id="skills">
+  <div class="container section__grid">
+    <h2 class="section__title">{skills.title}</h2>
+
+    <dl class="skills">
+      {skills.groups.map((group) => (
+        <div class="skills__group">
+          <dt>{group.category}</dt>
+          <dd>{group.items.join(', ')}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  .skills {
+    margin: 0;
+    display: grid;
+    gap: 1.5rem 2.5rem;
+  }
+
+  @media (min-width: 40rem) {
+    .skills { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .skills__group dt {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .skills__group dd {
+    margin: 0.3rem 0 0;
+    color: var(--muted);
+  }
+</style>
