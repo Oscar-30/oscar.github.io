@@ -1,0 +1,221 @@
+---
+// ============================================================
+// PÁGINA DE PROYECTOS
+// Cabecera, filtros por categoría, rejilla de proyectos,
+// logros y franja de contacto.
+// ============================================================
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/ui/Icon.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import ProjectCard from '../components/sections/ProjectCard.astro';
+import { getContent } from '../data';
+import { profile } from '../data/profile';
+import { routes } from '../data/routes';
+import type { Lang } from '../data/types';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getContent(lang);
+const p = t.projectsPage;
+
+// Lista de categorías sin repetir, sacada de los propios proyectos
+const categories = [...new Set(t.projects.map((project) => project.category))];
+---
+
+<BaseLayout lang={lang} page="projects">
+  <PageHeader eyebrow={p.eyebrow} title={p.title} accent={p.titleAccent} intro={p.intro}>
+    <!-- Filtros: funcionan con el script de abajo -->
+    <div class="filters" role="group" aria-label={p.filterLabel}>
+      <button type="button" class="filter" data-filter="all" aria-pressed="true">
+        {p.filterAll} <span>[{t.projects.length}]</span>
+      </button>
+      {categories.map((category) => (
+        <button type="button" class="filter" data-filter={category} aria-pressed="false">{category}</button>
+      ))}
+    </div>
+  </PageHeader>
+
+  <section class="container section projects-section">
+    <div class="grid">
+      {t.projects.map((project) =>
+        project.featured ? (
+          <ProjectCard project={project} lang={lang} variant="featured" class="grid__featured" />
+        ) : (
+          <ProjectCard project={project} lang={lang} />
+        )
+      )}
+    </div>
+  </section>
+
+  <!-- Logros -->
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow"><Icon name="award" size={14} /> {p.achievements.eyebrow}</p>
+        <h2>{p.achievements.title}</h2>
+      </div>
+    </div>
+
+    <ul class="achievements">
+      {p.achievements.items.map((item) => (
+        <li class:list={['card', 'achievement', `tone-${item.tone}`]}>
+          <div class="achievement__head">
+            <Icon name={item.icon} size={24} class="achievement__icon" />
+            <span class="achievement__label">{item.label}</span>
+          </div>
+          <p class="achievement__value">{item.value}</p>
+          <h3 class="achievement__title">{item.title}</h3>
+          <p class="achievement__text">{item.text}</p>
+          <p class="achievement__foot">
+            <span>{item.foot}</span>
+            <strong>{item.footStrong}</strong>
+          </p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Franja de contacto -->
+  <section class="container">
+    <div class="card strip">
+      <div>
+        <p class="eyebrow strip__eyebrow">{p.cta.eyebrow}</p>
+        <h2 class="strip__title">{p.cta.title}</h2>
+        <p class="strip__text">{p.cta.text}</p>
+      </div>
+      <div class="strip__actions">
+        <a class="btn btn--primary" href={routes.contact[lang]}>
+          <Icon name="mail" size={17} /> {p.cta.button}
+        </a>
+        <a class="btn" href={profile.cv[lang]} download>
+          <Icon name="download" size={17} /> {t.labels.downloadCv}
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Filtro de proyectos: al pulsar una categoría, oculta las tarjetas que no coinciden.
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter');
+  const cards = document.querySelectorAll<HTMLElement>('[data-category]');
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const filter = button.dataset.filter;
+
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+      cards.forEach((card) => {
+        card.hidden = filter !== 'all' && card.dataset.category !== filter;
+      });
+    });
+  });
+</script>
+
+<style>
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1.25rem;
+    padding: 0.35rem;
+    border-radius: 999px;
+    background: rgba(23, 27, 38, 0.8);
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .filter {
+    padding: 0.3rem 0.8rem;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-soft);
+    cursor: pointer;
+  }
+
+  .filter:hover { color: var(--text); }
+
+  .filter[aria-pressed='true'] {
+    background: #c0c1ff;
+    color: #1e1b4b;
+    font-weight: 600;
+  }
+
+  .projects-section { padding-top: 1.5rem; }
+
+  .grid { display: grid; gap: 1.5rem; }
+
+  .grid :global([hidden]) { display: none; }
+
+  @media (min-width: 48rem) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .grid :global(.grid__featured) { grid-column: 1 / -1; }
+  }
+
+  @media (min-width: 64rem) {
+    .grid { grid-template-columns: repeat(3, 1fr); }
+    .grid :global(.grid__featured) { grid-column: span 2; }
+  }
+
+  /* ----- Logros ----- */
+  .achievements { display: grid; gap: 1.25rem; }
+
+  @media (min-width: 40rem) { .achievements { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .achievements { grid-template-columns: repeat(4, 1fr); } }
+
+  .achievement { display: flex; flex-direction: column; padding: 1.5rem; }
+
+  .achievement__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+
+  .achievement :global(.achievement__icon) { color: var(--tone); }
+
+  .achievement__label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--tone);
+  }
+
+  .achievement__value { font-size: 1.9rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+
+  .achievement__title { margin-top: 0.25rem; font-size: 0.95rem; font-weight: 600; }
+
+  .achievement__text { margin: 0.5rem 0 1.25rem; font-size: 0.8rem; color: var(--muted); }
+
+  .achievement__foot {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--faint);
+    text-transform: uppercase;
+  }
+
+  .achievement__foot strong { color: var(--tone); }
+
+  /* ----- Franja de contacto ----- */
+  .strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    background: rgba(23, 27, 38, 0.9);
+  }
+
+  .strip__eyebrow { color: var(--cyan-light); }
+
+  .strip__title { margin-top: 0.35rem; font-size: clamp(1.4rem, 3vw, 1.75rem); font-weight: 700; }
+
+  .strip__text { margin-top: 0.25rem; color: var(--muted); }
+
+  .strip__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+</style>

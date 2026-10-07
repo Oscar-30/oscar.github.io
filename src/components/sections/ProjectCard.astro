@@ -1,0 +1,262 @@
+---
+// ============================================================
+// TARJETA DE PROYECTO
+// variant="card"     → tarjeta normal con imagen arriba
+// variant="featured" → tarjeta grande del proyecto destacado
+// ============================================================
+import Icon from '../ui/Icon.astro';
+import { getContent } from '../../data';
+import type { Lang, Project } from '../../data/types';
+
+interface Props {
+  project: Project;
+  lang: Lang;
+  variant?: 'card' | 'featured';
+  badge?: string;      // Texto de la insignia (solo en featured)
+  class?: string;
+}
+
+const { project, lang, variant = 'card', badge, class: className } = Astro.props;
+const t = getContent(lang);
+
+// Iniciales para la imagen de relleno cuando no hay captura
+const initials = project.title
+  .split(' ')
+  .slice(0, 2)
+  .map((word) => word[0])
+  .join('')
+  .toUpperCase();
+---
+
+{variant === 'featured' ? (
+  <article class:list={['card', 'featured', className]} data-category={project.category}>
+    <div class="featured__badges">
+      <span class="pill pill--indigo"><Icon name="star" size={13} /> {badge ?? project.category}</span>
+      {project.metric && (
+        <span class="pill pill--emerald"><Icon name="trending" size={13} /> {project.metric}</span>
+      )}
+    </div>
+
+    <h3 class="featured__title">{project.title}</h3>
+    <p class="featured__text">{project.description}</p>
+
+    {project.highlight && (
+      <div class="inset highlight">
+        <p class="highlight__label"><Icon name="zap" size={13} /> {project.highlight.label}</p>
+        <p class="highlight__text">{project.highlight.text}</p>
+      </div>
+    )}
+
+    <ul class="tags">
+      {project.tech.map((tech) => <li>{tech}</li>)}
+    </ul>
+
+    <div class="featured__footer">
+      <span class="featured__category">{project.category}</span>
+      <div class="featured__links">
+        {project.demo && (
+          <a class="btn btn--small btn--primary" href={project.demo} target="_blank" rel="noopener noreferrer">
+            {t.labels.demo} <Icon name="arrow-up-right" size={14} />
+            <span class="sr-only">: {project.title}</span>
+          </a>
+        )}
+        {project.repo && (
+          <a class="btn btn--small" href={project.repo} target="_blank" rel="noopener noreferrer">
+            {t.labels.code} <Icon name="code" size={14} />
+            <span class="sr-only">: {project.title}</span>
+          </a>
+        )}
+      </div>
+    </div>
+  </article>
+) : (
+  <article class:list={['card', 'project', className]} data-category={project.category}>
+    <div class="project__media">
+      {project.image ? (
+        <img src={project.image} alt="" loading="lazy" />
+      ) : (
+        <div class="project__placeholder" aria-hidden="true">
+          <span>{initials}</span>
+        </div>
+      )}
+      <span class="project__chip">{project.category}</span>
+    </div>
+
+    <div class="project__body">
+      <h3 class="project__title">{project.title}</h3>
+      <p class="project__text">{project.description}</p>
+      <ul class="tags">
+        {project.tech.map((tech) => <li>{tech}</li>)}
+      </ul>
+    </div>
+
+    <div class="project__footer">
+      {project.demo ? (
+        <a class="project__link" href={project.demo} target="_blank" rel="noopener noreferrer">
+          {t.labels.demo} <Icon name="arrow-up-right" size={14} />
+          <span class="sr-only">: {project.title}</span>
+        </a>
+      ) : <span />}
+      {project.repo && (
+        <a class="project__link project__link--muted" href={project.repo} target="_blank" rel="noopener noreferrer">
+          <Icon name="github" size={15} /> GitHub
+          <span class="sr-only">: {project.title}</span>
+        </a>
+      )}
+    </div>
+  </article>
+)}
+
+<style>
+  /* ----- Tarjeta destacada ----- */
+  .featured {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: border-color 0.3s;
+  }
+
+  .featured:hover { border-color: rgba(99, 102, 241, 0.45); }
+
+  .featured__badges { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; }
+
+  .featured__title {
+    font-size: clamp(1.4rem, 2.6vw, 1.65rem);
+    font-weight: 700;
+    transition: color 0.2s;
+  }
+
+  .featured:hover .featured__title { color: #c4b5fd; }
+
+  .featured__text { font-size: 0.92rem; color: var(--text-soft); max-width: 40rem; }
+
+  .highlight { background: rgba(10, 14, 24, 0.7); }
+
+  .highlight__label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan-light);
+  }
+
+  .highlight__text {
+    margin-top: 0.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.55;
+    color: var(--text-soft);
+  }
+
+  .featured__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .featured__category { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
+
+  .featured__links { display: flex; gap: 0.6rem; }
+
+  /* ----- Tarjeta normal ----- */
+  .project {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .project:hover { border-color: rgba(99, 102, 241, 0.45); }
+
+  .project__media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+    background: #0f172a;
+  }
+
+  .project__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s;
+  }
+
+  .project:hover .project__media img { transform: scale(1.05); }
+
+  /* Relleno cuando no hay imagen: iniciales sobre degradado */
+  .project__placeholder {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.35), transparent 55%),
+      radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.25), transparent 55%),
+      #0f172a;
+  }
+
+  .project__placeholder span {
+    font-family: var(--font-mono);
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.18);
+    letter-spacing: 0.05em;
+  }
+
+  .project__chip {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.4rem;
+    border: 1px solid var(--line-strong);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--indigo-light);
+  }
+
+  .project__body {
+    display: grid;
+    gap: 0.7rem;
+    padding: 1.5rem 1.5rem 0;
+  }
+
+  .project__title { font-size: 1.25rem; font-weight: 700; transition: color 0.2s; }
+
+  .project:hover .project__title { color: #c4b5fd; }
+
+  .project__text { font-size: 0.85rem; color: var(--text-soft); }
+
+  .project__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: auto 1.5rem 0;
+    padding: 1.1rem 0 1.25rem;
+    border-top: 1px solid var(--line);
+    margin-top: 1.25rem;
+  }
+
+  .project__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .project__link:hover { color: var(--indigo-light); }
+
+  .project__link--muted { font-family: var(--font-mono); font-weight: 500; color: var(--muted); }
+</style>

@@ -11,12 +11,25 @@ Portfolio en español e inglés hecho con [Astro](https://astro.build).
 | `npm run build`   | Genera la web final en la carpeta `dist/`            |
 | `npm run preview` | Muestra en local la versión generada por `build`     |
 
-## Dónde editar
+## Estructura
 
-- `src/data/profile.ts`: nombre, correo y enlaces (comunes a los dos idiomas).
-- `src/data/es.ts` y `src/data/en.ts`: todos los textos, experiencia y proyectos.
-- `src/styles/global.css`: colores y tipografías.
-- `public/cv-es.pdf` y `public/cv-en.pdf`: tus CV.
+```
+src/
+├── data/          ← TU CONTENIDO (lo que más vas a tocar)
+│   ├── profile.ts     nombre, correo, enlaces, CV
+│   ├── es.ts          todos los textos en español
+│   ├── en.ts          todos los textos en inglés
+│   ├── routes.ts      URL de cada página en cada idioma
+│   └── types.ts       forma que deben tener los datos
+├── pages/         ← una página por fichero = una URL
+├── views/         ← el diseño de cada página (Inicio, Proyectos, Sobre mí, Contacto)
+├── components/
+│   ├── layout/        cabecera y pie
+│   ├── sections/      piezas grandes reutilizables (tarjeta de proyecto, banner...)
+│   └── ui/            piezas pequeñas (iconos, botón de copiar...)
+├── layouts/       ← esqueleto HTML común
+└── styles/        ← colores, tipografías y estilos compartidos
+```
 
 Busca `TODO` en el proyecto para encontrar lo que falta por rellenar.
 

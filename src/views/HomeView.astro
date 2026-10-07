@@ -1,0 +1,487 @@
+---
+// ============================================================
+// PÁGINA DE INICIO
+// La usan src/pages/index.astro (español) y src/pages/en/index.astro.
+// Secciones: portada, bento, proyectos y llamada a la acción.
+// ============================================================
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/ui/Icon.astro';
+import CopyButton from '../components/ui/CopyButton.astro';
+import ProjectCard from '../components/sections/ProjectCard.astro';
+import SkillMatrix from '../components/sections/SkillMatrix.astro';
+import CtaBanner from '../components/sections/CtaBanner.astro';
+import { getContent } from '../data';
+import { profile } from '../data/profile';
+import { routes } from '../data/routes';
+import type { Lang } from '../data/types';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getContent(lang);
+const h = t.home;
+
+// El proyecto destacado va en el bento; los siguientes 3, en la galería
+const featured = t.projects.find((p) => p.featured) ?? t.projects[0];
+const others = t.projects.filter((p) => p !== featured).slice(0, 3);
+
+const github = profile.links.find((link) => link.icon === 'github');
+---
+
+<BaseLayout lang={lang} page="home">
+  <!-- ========== PORTADA ========== -->
+  <section class="container hero">
+    <div class="hero__main">
+      <span class="pill">
+        <Icon name="globe" size={14} class="hero__pill-icon" />
+        {h.pill}
+      </span>
+
+      <h1 class="hero__title">
+        {h.titleLine1}<br />
+        <span class="gradient-text">{h.titleLine2}</span>
+      </h1>
+
+      <p class="hero__intro">{h.intro}</p>
+
+      <div class="hero__actions">
+        <a class="btn btn--primary" href={routes.projects[lang]}>
+          {h.ctaProjects} <Icon name="arrow-down" size={16} />
+        </a>
+        <a class="btn" href={routes.contact[lang]}>
+          <Icon name="mail" size={17} class="hero__cyan" /> {h.ctaContact}
+        </a>
+        {github && (
+          <a class="btn btn--mono" href={github.url} target="_blank" rel="noopener noreferrer">
+            <Icon name="code" size={15} /> {github.url.replace('https://', '')}
+          </a>
+        )}
+      </div>
+
+      <dl class="stats hero__stats">
+        {h.stats.map((stat) => (
+          <div class:list={['stat', stat.tone && `tone-${stat.tone}`]}>
+            <dt>{stat.label}</dt>
+            <dd>{stat.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+
+    <!-- Tarjeta con aspecto de editor de código. Se genera desde es.ts / en.ts -->
+    <div class="card terminal" aria-label={h.code.comment.replace('// ', '')}>
+      <div class="terminal__bar">
+        <span class="terminal__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="terminal__path">{profile.handle}:~$</span>
+        <span class="terminal__active"><span class="live-dot" aria-hidden="true"></span> active</span>
+      </div>
+
+      <pre class="terminal__code"><code><span class="c-comment">{h.code.comment}</span>
+<span class="c-key">const</span> <span class="c-var">{h.code.variable}</span> = {'{'}
+{h.code.fields.map((field) => (
+  <>{'  '}<span class="c-prop">{field.key}:</span> {
+    Array.isArray(field.value)
+      ? <>[{field.value.map((v, i) => <><span class="c-item">"{v}"</span>{i < (field.value as string[]).length - 1 ? ', ' : ''}</>)}]</>
+      : typeof field.value === 'boolean'
+        ? <span class="c-key">{String(field.value)}</span>
+        : <span class="c-string">"{field.value}"</span>
+  },{'\n'}</>
+))}{'};'}</code></pre>
+
+      <div class="terminal__run">
+        <span>{h.code.command} → <strong>{h.code.result}</strong></span>
+        <span class="terminal__time">0.04s</span>
+      </div>
+
+      <div class="inset terminal__status">
+        <span><Icon name="zap" size={15} class="hero__indigo" /> {h.code.statusLabel}</span>
+        <span class="terminal__tag">{h.code.statusTag}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== BENTO ========== -->
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow"><Icon name="layers" size={14} /> {h.bento.eyebrow}</p>
+        <h2>{h.bento.title}</h2>
+      </div>
+      <p>{h.bento.intro}</p>
+    </div>
+
+    <div class="bento">
+      <!-- 1. Proyecto destacado -->
+      <ProjectCard project={featured} lang={lang} variant="featured" badge={h.bento.featuredBadge} class="bento__wide" />
+
+      <!-- 2. Aficiones -->
+      <article class="card bento__narrow bento-card">
+        <div class="bento-card__head">
+          <span class="pill pill--fuchsia"><Icon name="heart" size={13} /> {h.bento.hobbies.badge}</span>
+          <span class="bento-card__aside">{h.bento.hobbies.aside}</span>
+        </div>
+        <h3 class="bento-card__title">{h.bento.hobbies.title}</h3>
+        <p class="bento-card__intro">{h.bento.hobbies.intro}</p>
+        <ul class="hobbies">
+          {t.hobbies.map((hobby) => (
+            <li class:list={['inset', 'hobby', `tone-${hobby.tone}`]}>
+              <span class="icon-box hobby__icon"><Icon name={hobby.icon} size={17} /></span>
+              <span class="hobby__body">
+                <strong>{hobby.title}</strong>
+                <span>{hobby.text}</span>
+              </span>
+              <span class="hobby__tag">{hobby.tag}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="bento-card__footer">
+          <span>{h.bento.hobbies.footer}</span>
+          <strong>{h.bento.hobbies.footerStrong}</strong>
+        </p>
+      </article>
+
+      <!-- 3. Tecnologías -->
+      <article class="card bento__wide bento-card">
+        <div class="bento-card__head">
+          <span class="pill pill--cyan"><Icon name="server" size={13} /> {h.bento.stack.badge}</span>
+          <span class="bento-card__aside">{h.bento.stack.aside}</span>
+        </div>
+        <h3 class="bento-card__title">{h.bento.stack.title}</h3>
+        <p class="bento-card__intro">{h.bento.stack.intro}</p>
+        <SkillMatrix groups={t.skills} />
+        <p class="bento-card__footer">
+          <span>{h.bento.stack.footer}</span>
+          <strong class="hero__cyan">{h.bento.stack.footerStrong}</strong>
+        </p>
+      </article>
+
+      <!-- 4. Por qué yo -->
+      <article class="card bento__narrow bento-card">
+        <div class="bento-card__head">
+          <span class="pill pill--emerald"><Icon name="rocket" size={13} /> {h.bento.why.badge}</span>
+          <span class="bento-card__aside">{h.bento.why.aside}</span>
+        </div>
+        <h3 class="bento-card__title">{h.bento.why.title}</h3>
+        <p class="bento-card__intro">{h.bento.why.intro}</p>
+        <ul class="points">
+          {h.bento.why.points.map((point) => (
+            <li>
+              <span class="icon-box points__check tone-emerald"><Icon name="check" size={14} /></span>
+              <p><strong>{point.title}</strong> {point.text}</p>
+            </li>
+          ))}
+        </ul>
+        <a class="btn why__cta" href={routes.contact[lang]}>
+          {h.bento.why.cta} <Icon name="mail" size={15} />
+        </a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ========== PROYECTOS ========== -->
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow work__eyebrow"><Icon name="rocket" size={14} /> {h.work.eyebrow}</p>
+        <h2>{h.work.title}</h2>
+      </div>
+      <p>{h.work.intro}</p>
+    </div>
+
+    <div class="work">
+      {others.map((project) => <ProjectCard project={project} lang={lang} />)}
+    </div>
+
+    <a class="work__all" href={routes.projects[lang]}>
+      {t.labels.viewAll} <Icon name="arrow-right" size={16} />
+    </a>
+  </section>
+
+  <!-- ========== LLAMADA A LA ACCIÓN ========== -->
+  <CtaBanner pill={h.cta.pill} title={h.cta.title} text={h.cta.text}>
+    <a class="btn btn--primary" href={`mailto:${profile.email}`}>
+      <Icon name="mail" size={17} /> {h.cta.button}
+    </a>
+    <CopyButton text={profile.email} label={t.labels.copy} done={t.labels.copied} />
+  </CtaBanner>
+</BaseLayout>
+
+<style>
+  /* ----- Portada ----- */
+  .hero {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+    padding-top: clamp(2.5rem, 6vw, 3.5rem);
+    padding-bottom: 2rem;
+  }
+
+  @media (min-width: 64rem) {
+    .hero { grid-template-columns: 1fr 28rem; }
+  }
+
+  .hero__main { display: grid; gap: 1.5rem; min-width: 0; }
+
+  .hero :global(.hero__pill-icon) { color: var(--indigo-light); }
+
+  .hero__title {
+    font-size: clamp(2.4rem, 6vw, 3.9rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.06;
+  }
+
+  .hero__intro {
+    max-width: 38rem;
+    font-size: clamp(1.05rem, 2vw, 1.22rem);
+    color: var(--text-soft);
+  }
+
+  .hero__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+  :global(.hero__cyan) { color: var(--cyan-light); }
+  :global(.hero__indigo) { color: var(--indigo-light); }
+
+  .hero__stats {
+    margin: 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    padding: 0.8rem;
+    border-radius: var(--radius);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(17, 24, 39, 0.4);
+  }
+
+  .stat dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--tone, var(--text));
+    line-height: 1.2;
+  }
+
+  .stat dt { margin-top: 0.15rem; font-size: 0.75rem; color: var(--muted); }
+
+  /* ----- Tarjeta de código ----- */
+  .terminal {
+    padding: 1.25rem;
+    min-width: 0;
+    background: rgba(17, 24, 39, 0.8);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+
+  .terminal__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+
+  .terminal__dots { display: flex; gap: 0.4rem; }
+
+  .terminal__dots i {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: #f43f5e;
+  }
+
+  .terminal__dots i:nth-child(2) { background: #f59e0b; }
+  .terminal__dots i:nth-child(3) { background: #10b981; }
+
+  .terminal__path { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .terminal__active {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: auto;
+    padding: 0.1rem 0.5rem;
+    border-radius: 0.3rem;
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--emerald);
+  }
+
+  .terminal__code {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    line-height: 1.85;
+    color: var(--text-soft);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  /* Colores del "resaltado de sintaxis" */
+  .c-comment { color: var(--faint); }
+  .c-key { color: #e879f9; }
+  .c-var { color: var(--indigo-light); }
+  .c-prop { color: var(--muted); }
+  .c-string { color: #6ee7b7; }
+  .c-item { color: var(--amber); }
+
+  .terminal__run {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .terminal__run strong { color: var(--emerald); }
+
+  .terminal__time { color: var(--faint); }
+
+  .terminal__status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .terminal__status > span:first-child { display: inline-flex; align-items: center; gap: 0.45rem; }
+
+  .terminal__tag {
+    padding: 0.1rem 0.5rem;
+    border-radius: 0.3rem;
+    background: rgba(16, 185, 129, 0.1);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--emerald);
+  }
+
+  /* ----- Bento ----- */
+  .bento { display: grid; gap: 1.25rem; }
+
+  @media (min-width: 52rem) {
+    .bento { grid-template-columns: repeat(12, 1fr); }
+    .bento :global(.bento__wide) { grid-column: span 7; }
+    .bento :global(.bento__narrow) { grid-column: span 5; }
+  }
+
+  .bento-card { display: flex; flex-direction: column; }
+
+  .bento-card__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .bento-card__aside { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); }
+
+  .bento-card__title { font-size: 1.25rem; font-weight: 700; }
+
+  .bento-card__intro { margin: 0.25rem 0 1.1rem; font-size: 0.8rem; color: var(--text-soft); }
+
+  .bento-card__footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  /* Deja hueco entre el contenido y el pie de la tarjeta */
+  .bento-card > :nth-last-child(2) { margin-bottom: 1.25rem; }
+
+  .bento-card__footer strong { font-family: var(--font-mono); font-weight: 500; color: var(--text); }
+
+  .hobbies { display: grid; gap: 0.75rem; }
+
+  .hobby {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .hobby__icon { width: 2rem; height: 2rem; border-radius: var(--radius-sm); }
+
+  .hobby__body { display: grid; flex: 1; min-width: 0; }
+
+  .hobby__body strong { font-size: 0.8rem; color: var(--text); }
+
+  .hobby__body span { font-size: 0.7rem; color: var(--muted); }
+
+  .hobby__tag {
+    flex-shrink: 0;
+    padding: 0.1rem 0.5rem;
+    border-radius: 0.3rem;
+    background: var(--tone-bg);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--tone);
+  }
+
+  .points { display: grid; gap: 0.9rem; }
+
+  .points li { display: flex; align-items: flex-start; gap: 0.75rem; }
+
+  .points__check { width: 1.5rem; height: 1.5rem; border-radius: 0.4rem; margin-top: 0.1rem; }
+
+  .points p { font-size: 0.8rem; color: var(--text-soft); }
+
+  .points strong { color: var(--text); }
+
+  .why__cta {
+    width: 100%;
+    margin-top: 1.5rem;
+    border: none;
+    background: linear-gradient(90deg, #059669, #0d9488);
+    color: #fff;
+    font-size: 0.85rem;
+  }
+
+  .why__cta:hover { background: linear-gradient(90deg, #059669, #0d9488); filter: brightness(1.1); }
+
+  /* ----- Galería ----- */
+  .work__eyebrow { color: var(--fuchsia-light); }
+
+  .work { display: grid; gap: 1.5rem; }
+
+  @media (min-width: 48rem) { .work { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .work { grid-template-columns: repeat(3, 1fr); } }
+
+  .work__all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.75rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--indigo-light);
+  }
+
+  .work__all:hover { color: var(--text); }
+</style>

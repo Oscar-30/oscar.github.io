@@ -1,70 +1,78 @@
 ---
 // ============================================================
 // PLANTILLA BASE
-// Es el "esqueleto" de la página: <html>, <head> y <body>.
-// Todo lo que va dentro de <slot /> lo pone la página que
-// usa esta plantilla (como @RenderBody() en un _Layout de .NET).
+// Esqueleto común a todas las páginas: <head>, cabecera,
+// contenido (<slot />) y pie. Es como el _Layout.cshtml
+// de ASP.NET, y <slot /> equivale a @RenderBody().
 // ============================================================
 import '../styles/global.css';
-import type { Lang } from '../data/types';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import { getContent } from '../data';
+import { routes } from '../data/routes';
+import type { Lang, PageKey } from '../data/types';
 
-// Props: los "parámetros" que recibe este componente.
 interface Props {
   lang: Lang;
-  title: string;
-  description: string;
+  page: PageKey; // Qué página es: sirve para el título y para marcar el menú
 }
 
-const { lang, title, description } = Astro.props;
+const { lang, page } = Astro.props;
+const t = getContent(lang);
+const { title, description } = t.pages[page];
 
-// URLs de la versión en cada idioma, para que Google sepa que existen ambas.
-const esUrl = new URL('/', Astro.site);
-const enUrl = new URL('/en/', Astro.site);
+// URLs absolutas de esta página en cada idioma (para Google)
+const esUrl = new URL(routes[page].es, Astro.site);
+const enUrl = new URL(routes[page].en, Astro.site);
 ---
 
 <!doctype html>
 <html lang={lang}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#0b0f19" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Idiomas alternativos (SEO) -->
     <link rel="alternate" hreflang="es" href={esUrl} />
     <link rel="alternate" hreflang="en" href={enUrl} />
 
-    <!-- Vista previa al compartir el enlace en redes -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
 
-    <!-- Tipografías de Google Fonts -->
+    <!-- Tipografías: Plus Jakarta Sans (texto) y JetBrains Mono (código) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400..700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-
-    <!--
-      Script del tema. Va en el <head> y con is:inline para que
-      se ejecute ANTES de pintar la página y no haya un "parpadeo"
-      blanco al cargar en modo oscuro.
-    -->
-    <script is:inline>
-      (function () {
-        let theme = null;
-        try { theme = localStorage.getItem('theme'); } catch (e) {}
-        if (!theme) {
-          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        document.documentElement.dataset.theme = theme;
-      })();
-    </script>
   </head>
   <body>
-    <slot />
+    <a class="skip-link" href="#contenido">{lang === 'es' ? 'Saltar al contenido' : 'Skip to content'}</a>
+    <Header lang={lang} page={page} />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Footer lang={lang} />
   </body>
 </html>
+
+<style>
+  /* Enlace oculto que aparece al pulsar Tab: ayuda a quien navega con teclado */
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -3rem;
+    z-index: 100;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--indigo);
+    color: #fff;
+  }
+
+  .skip-link:focus { top: 1rem; }
+</style>

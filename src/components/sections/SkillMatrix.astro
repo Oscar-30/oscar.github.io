@@ -1,0 +1,94 @@
+---
+// ============================================================
+// MATRIZ DE HABILIDADES
+// layout="stacked"  → grupos uno debajo de otro (tarjeta de Inicio)
+// layout="columns"  → grupos en columnas con nota (Sobre mí)
+// ============================================================
+import type { SkillGroup } from '../../data/types';
+
+interface Props {
+  groups: SkillGroup[];
+  layout?: 'stacked' | 'columns';
+}
+
+const { groups, layout = 'stacked' } = Astro.props;
+---
+
+<div class:list={['matrix', `matrix--${layout}`]}>
+  {groups.map((group, index) => (
+    <div class="group">
+      <div class="group__head">
+        <h4 class="group__title">{group.category}</h4>
+        {layout === 'columns' && <span class="group__index">{String(index + 1).padStart(2, '0')}</span>}
+      </div>
+      <ul class="group__items">
+        {group.items.map((item) => <li>{item}</li>)}
+      </ul>
+      {layout === 'columns' && group.note && <p class="group__note">{group.note}</p>}
+    </div>
+  ))}
+</div>
+
+<style>
+  .matrix { display: grid; gap: 1.1rem; }
+
+  .matrix--columns { gap: 1rem; }
+
+  @media (min-width: 52rem) {
+    .matrix--columns { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .matrix--columns .group {
+    padding: 1.1rem;
+    border-radius: var(--radius);
+    background: rgba(23, 27, 38, 0.7);
+  }
+
+  .group__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.55rem; }
+
+  .group__title {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .matrix--columns .group__title {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--text);
+  }
+
+  .group__index { font-family: var(--font-mono); font-size: 0.7rem; color: var(--cyan-light); }
+
+  .group__items { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+
+  .group__items li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line-strong);
+    background: var(--card-subtle);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-soft);
+  }
+
+  /* Puntito de color antes de cada tecnología en la versión apilada */
+  .matrix--stacked .group__items li::before {
+    content: '';
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 50%;
+    background: var(--cyan);
+  }
+
+  .group__note { margin-top: 0.85rem; font-size: 0.78rem; color: var(--muted); }
+</style>

@@ -1,0 +1,40 @@
+---
+// ============================================================
+// BOTÓN DE COPIAR: copia un texto al portapapeles.
+// <CopyButton text="hola@ejemplo.com" label="Copiar" done="Copiado" />
+// ============================================================
+import Icon from './Icon.astro';
+
+interface Props {
+  text: string;
+  label: string;
+  done: string;
+}
+
+const { text, label, done } = Astro.props;
+---
+
+<button class="btn btn--small btn--mono copy-btn" type="button" data-copy={text} data-label={label} data-done={done}>
+  <Icon name="copy" size={14} />
+  <span class="copy-btn__text" aria-live="polite">{label}</span>
+</button>
+
+<script>
+  // Se ejecuta en el navegador: busca todos los botones de copiar.
+  document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach((button) => {
+    const text = button.querySelector('.copy-btn__text');
+
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy ?? '');
+        if (text) text.textContent = button.dataset.done ?? '';
+        // Pasados 2 segundos vuelve al texto original
+        setTimeout(() => {
+          if (text) text.textContent = button.dataset.label ?? '';
+        }, 2000);
+      } catch {
+        // Si el navegador no deja copiar, no hacemos nada
+      }
+    });
+  });
+</script>

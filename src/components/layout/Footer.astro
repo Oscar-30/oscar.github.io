@@ -1,0 +1,110 @@
+---
+// ============================================================
+// PIE DE PÁGINA
+// ============================================================
+import Icon from '../ui/Icon.astro';
+import { getContent } from '../../data';
+import { profile } from '../../data/profile';
+import type { Lang } from '../../data/types';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getContent(lang);
+const year = new Date().getFullYear(); // Se calcula al compilar
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div>
+      <p class="footer__name">
+        <span class="footer__mark" aria-hidden="true">&lt;/&gt;</span>
+        {profile.name}
+      </p>
+      <p class="footer__tagline">{t.footer.tagline}</p>
+    </div>
+
+    <ul class="footer__links">
+      {profile.links.map((link) => (
+        <li>
+          <a href={link.url} target="_blank" rel="noopener noreferrer" aria-label={link.name} title={link.name}>
+            <Icon name={link.icon} size={18} />
+          </a>
+        </li>
+      ))}
+      <li>
+        <a href={`mailto:${profile.email}`} aria-label="Email" title="Email">
+          <Icon name="mail" size={18} />
+        </a>
+      </li>
+    </ul>
+
+    <p class="footer__note">© {year} {profile.name}. {t.footer.note}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: 3rem;
+    padding-block: 2.5rem;
+    border-top: 1px solid var(--line);
+    background: rgba(11, 15, 25, 0.9);
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 2rem;
+  }
+
+  .footer__name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text);
+  }
+
+  .footer__mark {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--cyan-light);
+  }
+
+  .footer__tagline {
+    margin-top: 0.2rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .footer__links { display: flex; gap: 0.6rem; }
+
+  .footer__links a {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--line-strong);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-soft);
+    transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+  }
+
+  .footer__links a:hover {
+    border-color: var(--indigo);
+    background: rgba(99, 102, 241, 0.2);
+    color: #fff;
+  }
+
+  .footer__note {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--faint);
+  }
+</style>

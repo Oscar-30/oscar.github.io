@@ -1,0 +1,373 @@
+---
+// ============================================================
+// PÁGINA SOBRE MÍ
+// Cabecera con cifras, trayectoria + disponibilidad,
+// aficiones, habilidades y llamada a la acción.
+// ============================================================
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/ui/Icon.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import SkillMatrix from '../components/sections/SkillMatrix.astro';
+import CtaBanner from '../components/sections/CtaBanner.astro';
+import { getContent } from '../data';
+import { profile } from '../data/profile';
+import { routes } from '../data/routes';
+import type { Lang } from '../data/types';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getContent(lang);
+const a = t.about;
+---
+
+<BaseLayout lang={lang} page="about">
+  <PageHeader eyebrow={a.eyebrow} title={a.title} accent={a.titleAccent} intro={a.intro}>
+    <dl class="stats about-stats">
+      {a.stats.map((stat) => (
+        <div class:list={['about-stat', `tone-${stat.tone}`]}>
+          <dt>{stat.label}</dt>
+          <dd>
+            <span class="about-stat__value">{stat.value}</span>
+            <span class="about-stat__note">{stat.note}</span>
+          </dd>
+        </div>
+      ))}
+    </dl>
+  </PageHeader>
+
+  <section class="container section about-main">
+    <!-- Trayectoria -->
+    <article class="card journey">
+      <div class="card-head">
+        <span class="icon-box"><Icon name="trending" size={18} /></span>
+        <div>
+          <p class="eyebrow">{a.journey.eyebrow}</p>
+          <h2 class="card-head__title">{a.journey.title}</h2>
+        </div>
+        <span class="card-head__aside">{a.journey.range}</span>
+      </div>
+
+      <ol class="timeline">
+        {t.journey.map((item) => (
+          <li class:list={['timeline__item', item.type === 'study' && 'is-study', item.current && 'is-current']}>
+            <div class="timeline__head">
+              <h3>{item.title}</h3>
+              {item.current ? (
+                <span class="timeline__now">{t.labels.current}</span>
+              ) : (
+                <span class="timeline__period">{item.period}</span>
+              )}
+            </div>
+            <p class="timeline__org">
+              <Icon name={item.type === 'study' ? 'graduation' : 'briefcase'} size={14} />
+              {item.org}
+              {item.current && <span class="timeline__period"> · {item.period}</span>}
+            </p>
+            <p class="timeline__text">{item.text}</p>
+            <ul class="tags">
+              {item.tech.map((tech) => <li>{tech}</li>)}
+            </ul>
+          </li>
+        ))}
+      </ol>
+    </article>
+
+    <!-- Disponibilidad -->
+    <article class="card availability">
+      <div class="card-head">
+        <span class="icon-box tone-emerald"><Icon name="check" size={18} /></span>
+        <div>
+          <p class="eyebrow availability__eyebrow">{a.availability.eyebrow}</p>
+          <h2 class="card-head__title">{a.availability.title}</h2>
+        </div>
+        <span class="live-dot card-head__dot" aria-hidden="true"></span>
+      </div>
+
+      <div class="availability__items">
+        {a.availability.items.map((item) => (
+          <div class="inset">
+            <div class="availability__row">
+              <h3>{item.title}</h3>
+              <span class="availability__tag">{item.tag}</span>
+            </div>
+            <p>{item.text}</p>
+          </div>
+        ))}
+      </div>
+
+      <p class="availability__label">{a.availability.placesLabel}</p>
+      <ul class="places">
+        {a.availability.places.map((place) => (
+          <li><Icon name="map-pin" size={13} /> {place}</li>
+        ))}
+      </ul>
+
+      <div class="availability__footer">
+        <Icon name="globe" size={20} class="availability__globe" />
+        <div>
+          <strong>{a.availability.footerTitle}</strong>
+          <span>{a.availability.footerText}</span>
+        </div>
+        <Icon name="check" size={18} class="availability__ok" />
+      </div>
+    </article>
+  </section>
+
+  <!-- Fuera del código -->
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow beyond__eyebrow">{a.beyond.eyebrow}</p>
+        <h2>{a.beyond.title}</h2>
+      </div>
+      <p>{a.beyond.intro}</p>
+    </div>
+
+    <ul class="beyond">
+      {t.hobbies.map((hobby) => (
+        <li class:list={['card', 'hobby-card', `tone-${hobby.tone}`]}>
+          <div class="hobby-card__head">
+            <span class="icon-box"><Icon name={hobby.icon} size={20} /></span>
+            <span class="hobby-card__tag">{hobby.tag}</span>
+          </div>
+          <h3>{hobby.title}</h3>
+          <p>{hobby.text}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Habilidades -->
+  <section class="container">
+    <article class="card">
+      <div class="card-head">
+        <span class="icon-box"><Icon name="layers" size={18} /></span>
+        <div>
+          <p class="eyebrow stack__eyebrow">{a.stack.eyebrow}</p>
+          <h2 class="card-head__title">{a.stack.title}</h2>
+        </div>
+        <span class="card-head__aside">{a.stack.aside}</span>
+      </div>
+      <SkillMatrix groups={t.skills} layout="columns" />
+    </article>
+  </section>
+
+  <CtaBanner pill={a.cta.pill} title={a.cta.title} text={a.cta.text}>
+    <a class="btn btn--primary" href={profile.cv[lang]} download>
+      <Icon name="download" size={17} /> {t.labels.downloadCv}
+    </a>
+    <a class="btn" href={routes.contact[lang]}>
+      <Icon name="mail" size={17} /> {t.nav.contact}
+    </a>
+  </CtaBanner>
+</BaseLayout>
+
+<style>
+  /* ----- Cifras ----- */
+  .about-stats { margin: 1rem 0 0; max-width: 56rem; }
+
+  .about-stat {
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius);
+    background: rgba(23, 27, 38, 0.9);
+  }
+
+  .about-stat dt {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .about-stat dd { margin: 0.25rem 0 0; display: grid; }
+
+  .about-stat__value { font-size: 1.15rem; font-weight: 600; color: var(--tone); }
+
+  .about-stat__note { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); }
+
+  /* ----- Bloque principal en dos columnas ----- */
+  .about-main { display: grid; gap: 1.5rem; padding-top: 2rem; }
+
+  @media (min-width: 60rem) {
+    .about-main { grid-template-columns: 7fr 5fr; }
+  }
+
+  /* Cabecera común a las tarjetas grandes */
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .card-head .eyebrow { font-size: 0.66rem; }
+
+  .card-head__title { font-size: 1.4rem; font-weight: 700; }
+
+  .card-head__aside {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .card-head__dot { margin-left: auto; }
+
+  /* ----- Línea temporal ----- */
+  .timeline { display: grid; gap: 1.75rem; }
+
+  .timeline__item {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+
+  /* El punto de cada elemento: verde (actual), lila (trabajo), rosa (estudios) */
+  .timeline__item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.45rem;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: #c0c1ff;
+  }
+
+  .timeline__item.is-study::before { background: var(--fuchsia-light); }
+  .timeline__item.is-current::before { background: var(--emerald); box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.15); }
+
+  .timeline__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+  }
+
+  .timeline__head h3 { font-size: 1.1rem; font-weight: 600; }
+
+  .timeline__period { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); }
+
+  .timeline__now {
+    padding: 0.1rem 0.5rem;
+    border-radius: 0.3rem;
+    background: rgba(16, 185, 129, 0.12);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--emerald);
+  }
+
+  .timeline__org {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.2rem;
+    font-size: 0.85rem;
+    color: var(--indigo-light);
+  }
+
+  .timeline__text { margin: 0.5rem 0 0.75rem; font-size: 0.9rem; color: var(--text-soft); }
+
+  /* ----- Disponibilidad ----- */
+  .availability { display: flex; flex-direction: column; }
+
+  .availability__eyebrow { color: var(--emerald); }
+
+  .availability__items { display: grid; gap: 0.75rem; }
+
+  .availability__row { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; }
+
+  .availability__row h3 { font-size: 0.95rem; font-weight: 600; }
+
+  .availability__items p { margin-top: 0.3rem; font-size: 0.8rem; color: var(--muted); }
+
+  .availability__tag {
+    flex-shrink: 0;
+    padding: 0.1rem 0.45rem;
+    border-radius: 0.3rem;
+    background: rgba(6, 182, 212, 0.12);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    color: var(--cyan-light);
+  }
+
+  .availability__label {
+    margin: 1.25rem 0 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .places { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+  .places li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-sm);
+    background: rgba(10, 14, 24, 0.8);
+    font-size: 0.75rem;
+    color: var(--text-soft);
+  }
+
+  .places li :global(svg) { color: var(--cyan-light); }
+
+  .availability__footer {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-top: auto;
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius);
+    background: rgba(10, 14, 24, 0.85);
+  }
+
+  .availability { gap: 0; }
+  .places { margin-bottom: 1.5rem; }
+
+  .availability__footer div { display: grid; flex: 1; }
+
+  .availability__footer strong { font-size: 0.85rem; color: var(--text); }
+
+  .availability__footer span { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); }
+
+  .availability__footer :global(.availability__globe) { color: var(--cyan-light); }
+  .availability__footer :global(.availability__ok) { color: var(--emerald); }
+
+  /* ----- Aficiones ----- */
+  .beyond__eyebrow { color: var(--fuchsia-light); }
+
+  .beyond { display: grid; gap: 1.25rem; }
+
+  @media (min-width: 52rem) { .beyond { grid-template-columns: repeat(3, 1fr); } }
+
+  .hobby-card h3 { margin-top: 1.25rem; font-size: 1.2rem; font-weight: 700; }
+
+  .hobby-card p { margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-soft); }
+
+  .hobby-card__head { display: flex; justify-content: space-between; align-items: center; }
+
+  .hobby-card__tag {
+    padding: 0.1rem 0.5rem;
+    border-radius: 0.3rem;
+    background: var(--tone-bg);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--tone);
+  }
+
+  /* ----- Habilidades ----- */
+  .stack__eyebrow { color: var(--cyan-light); }
+</style>

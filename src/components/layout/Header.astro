@@ -1,0 +1,250 @@
+---
+// ============================================================
+// CABECERA: marca, menú, idioma, CV y menú móvil.
+// ============================================================
+import Icon from '../ui/Icon.astro';
+import { getContent } from '../../data';
+import { profile } from '../../data/profile';
+import { routes, navOrder } from '../../data/routes';
+import type { Lang, PageKey } from '../../data/types';
+
+interface Props {
+  lang: Lang;
+  page: PageKey;
+}
+
+const { lang, page } = Astro.props;
+const t = getContent(lang);
+const otherLang: Lang = lang === 'es' ? 'en' : 'es';
+---
+
+<header class="header">
+  <div class="container header__inner">
+    <a class="brand" href={routes.home[lang]}>
+      <span class="brand__mark" aria-hidden="true">&lt;/&gt;</span>
+      <span class="brand__name">{profile.name}</span>
+    </a>
+
+    <span class="status">
+      <span class="live-dot" aria-hidden="true"></span>
+      {t.status}
+    </span>
+
+    <nav class="nav" id="site-nav" aria-label={t.nav.mainNav}>
+      <ul class="nav__list">
+        {navOrder.map((key) => (
+          <li>
+            <a
+              class="nav__link"
+              href={routes[key][lang]}
+              aria-current={key === page ? 'page' : undefined}
+            >
+              {t.nav[key]}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="actions">
+      <!-- Lleva a la MISMA página en el otro idioma -->
+      <a class="lang" href={routes[page][otherLang]} hreflang={otherLang} lang={otherLang}>
+        {t.nav.switchLang}
+      </a>
+      <a class="cv" href={profile.cv[lang]} download>
+        <span class="cv__tag">PDF</span>
+        <span>{t.nav.cv}</span>
+      </a>
+      <button
+        class="menu-btn"
+        type="button"
+        aria-controls="site-nav"
+        aria-expanded="false"
+        data-open-label={t.nav.openMenu}
+        data-close-label={t.nav.closeMenu}
+        aria-label={t.nav.openMenu}
+      >
+        <Icon name="menu" size={20} class="icon-open" />
+        <Icon name="x" size={20} class="icon-close" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Menú móvil: el botón abre y cierra la lista de enlaces.
+  const button = document.querySelector<HTMLButtonElement>('.menu-btn');
+  const header = document.querySelector('.header');
+
+  button?.addEventListener('click', () => {
+    const open = button.getAttribute('aria-expanded') !== 'true';
+    button.setAttribute('aria-expanded', String(open));
+    button.setAttribute('aria-label', (open ? button.dataset.closeLabel : button.dataset.openLabel) ?? '');
+    header?.classList.toggle('is-open', open);
+  });
+</script>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(10, 14, 24, 0.82);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    min-height: 4rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .brand__mark {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--cyan-light);
+    transition: color 0.15s;
+  }
+
+  .brand:hover .brand__mark { color: var(--indigo-light); }
+
+  .brand__name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  /* Insignia de estado: solo en pantallas anchas */
+  .status {
+    display: none;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(23, 27, 38, 0.9);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.08);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--emerald);
+    white-space: nowrap;
+  }
+
+  /* Menú: oculto en móvil hasta pulsar el botón */
+  .nav {
+    display: none;
+    order: 10;
+    width: 100%;
+    padding-bottom: 0.75rem;
+  }
+
+  .header.is-open .nav { display: block; }
+
+  .nav__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .nav__link {
+    display: block;
+    padding: 0.5rem 0.85rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    color: var(--muted);
+    transition: background-color 0.15s, color 0.15s;
+  }
+
+  .nav__link:hover {
+    background: rgba(38, 42, 53, 0.9);
+    color: var(--text);
+  }
+
+  /* Página actual: resaltada como en el mockup */
+  .nav__link[aria-current='page'] {
+    background: rgba(38, 42, 53, 0.9);
+    color: var(--indigo-light);
+    font-weight: 600;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+
+  .lang {
+    padding: 0.4rem 0.65rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line-strong);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-soft);
+  }
+
+  .lang:hover { border-color: var(--indigo-light); color: var(--text); }
+
+  .cv {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius);
+    background: var(--card);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.15);
+    font-size: 0.85rem;
+    color: var(--text);
+    transition: background-color 0.15s, color 0.15s;
+  }
+
+  .cv:hover { background: var(--card-subtle); color: var(--indigo-light); }
+
+  .cv__tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--cyan-light);
+  }
+
+  .menu-btn {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .menu-btn :global(.icon-close) { display: none; }
+  .header.is-open .menu-btn :global(.icon-open) { display: none; }
+  .header.is-open .menu-btn :global(.icon-close) { display: block; }
+
+  /* A partir de tablet: menú en línea y sin botón */
+  @media (min-width: 48rem) {
+    .header__inner { flex-wrap: nowrap; }
+    .nav { display: block; order: 0; width: auto; padding: 0; margin-inline: auto; }
+    .nav__list { flex-direction: row; }
+    .actions { margin-left: 0; }
+    .menu-btn { display: none; }
+  }
+
+  @media (min-width: 80rem) {
+    .status { display: inline-flex; }
+  }
+</style>
