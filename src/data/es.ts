@@ -11,7 +11,7 @@ export const es: Content = {
   // Título y descripción de cada página (pestaña del navegador y Google)
   pages: {
     home: {
-      title: 'Lorem Ipsum | Ingeniero de software', // TODO
+      title: 'Oscar Llorens | Ingeniero de software', // TODO
       description: 'Lorem ipsum dolor sit amet. Desarrollador .NET y estudiante de último curso de Ingeniería Informática.', // TODO
     },
     projects: {
@@ -101,30 +101,39 @@ export const es: Content = {
   // ---------- TRAYECTORIA (trabajos y estudios) ----------
   // Del más reciente al más antiguo. type: 'work' o 'study'.
   journey: [
-    {
-      type: 'work',
-      title: 'Desarrollador .NET',
-      org: 'Lorem Ipsum S.L.',
-      period: '2024 – hoy',
-      current: true,
-      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-      tech: ['C#', '.NET Core', 'SQL Server'],
-    },
-    {
-      type: 'work',
-      title: 'Desarrollador en prácticas',
-      org: 'Dolor Sit Amet S.A.',
-      period: '2023 – 2024',
-      text: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-      tech: ['C#', '.NET Framework', 'SQL'],
-    },
-    {
+      {
       type: 'study',
-      title: 'Grado en Ingeniería Informática',
-      org: 'Universidad Lorem Ipsum',
-      period: '2022 – 2027',
-      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mención en lorem ipsum.',
-      tech: ['Algoritmos', 'Bases de datos', 'Ingeniería del software'],
+      title: 'Ingeniería Informática',
+      org: 'Universidad Europea de Madrid',
+      current: true,
+      period: 'Sep 2020 – Actualidad',
+      text: 'Desarrollo y mantenimiento de aplicaciones web con .NET Core y .NET Framework y SQL Server.',
+      tech: ['Java', 'Python', 'HTML, CSS, JavaScript', 'SQL', 'IA'],
+    },
+    {
+      type: 'work',
+      title: 'Desarrollador Junior .NET',
+      org: 'NCS Spain',
+      period: 'Feb 2024 – Ago 2025',
+      text: 'Desarrollo y mantenimiento de aplicaciones web con .NET Core y .NET Framework y SQL Server.',
+      tech: ['C#', '.NET Core', '.NET Framework', 'SQL Server', 'Git'],
+    },
+    {
+      type: 'work',
+      title: 'Desarrollador Junior',
+      org: 'CIM ECM',
+      period: 'Sep 2025 – Feb 2026',
+      text: 'Desarrollo de pequeñas tareas con Java. Mantenimiento y testing de APIs con Postman.',
+      tech: ['Java', 'Postman', 'PowerShell'],
+    },
+    {
+      type: 'work',
+      title: 'Técnico Soporte Desarrollo',
+      org: 'Cegid',
+      current: true,
+      period: 'May 2026 – Actualidad',
+      text: 'Resolución de incidencias y soporte técnico. Depuración y modificación de código. Creación y modificación de elementos mediante bases de datos SQL y Oracle.',
+      tech: ['PeopleNet', 'Lenguaje propio LN4', 'SQL'],
     },
   ],
 
@@ -133,18 +142,18 @@ export const es: Content = {
   skills: [
     {
       category: 'Lenguajes',
-      items: ['C#', 'SQL', 'JavaScript', 'Python', 'Lorem'],
-      note: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      items: ['C#', 'HTML','JavaScript', 'SQL', 'Python'],
+      //note: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     },
     {
       category: 'Backend y datos',
       items: ['.NET Core', '.NET Framework', 'ASP.NET', 'Entity Framework', 'SQL Server'],
-      note: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco.',
+      //note: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco.',
     },
     {
       category: 'Herramientas',
-      items: ['Git', 'Visual Studio', 'Azure DevOps', 'Docker', 'Lorem'],
-      note: 'Duis aute irure dolor in reprehenderit in voluptate.',
+      items: ['Git', 'Visual Studio Code', 'Visual Studio 2022', 'Postman', 'PowerShell' ],
+      //note: 'Duis aute irure dolor in reprehenderit in voluptate.',
     },
   ],
 
@@ -152,36 +161,36 @@ export const es: Content = {
   // Iconos disponibles en src/components/ui/icons.ts (gamepad, music, activity, book...)
   hobbies: [
     {
-      icon: 'music',
+      icon: 'medal',
       tone: 'fuchsia',
-      title: 'Lorem ipsum',
-      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.',
-      tag: 'Lorem',
+      title: 'Baloncesto',
+      text: 'Me gusta practicar todo tipo de deportes, pero me encanta jugar y competir al baloncesto.',
+      tag: 'Baloncesto',
     },
     {
-      icon: 'activity',
+      icon: 'music',
       tone: 'emerald',
-      title: 'Dolor sit amet',
-      text: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.',
-      tag: 'Ipsum',
+      title: 'Música',
+      text: 'Me encanta escuchar (casi) todo tipo de música. Además, toco la guitarra española y eléctrica.',
+      tag: 'Música',
     },
     {
-      icon: 'book',
+      icon: 'bookOpenText',
       tone: 'indigo',
-      title: 'Consectetur',
-      text: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.',
-      tag: 'Dolor',
+      title: 'Leer',
+      text: 'Me encanta sacar un rato todos los días para leer.',
+      tag: 'Leer',
     },
   ],
 
   // ---------- PÁGINA DE INICIO ----------
   home: {
     pill: 'Objetivo: becas y prácticas internacionales · 2027', // TODO
-    titleLine1: 'Desarrollador .NET',
-    titleLine2: 'e ingeniero en formación.',
+    titleLine1: 'Ingeniero Informático',
+    titleLine2: 'en progreso.',
     // TODO: dos o tres frases sobre ti
     intro:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',
+      'Estudiante de Ingeniería Informática con más de dos años de experiencia como desarrollador.',
     ctaProjects: 'Ver proyectos',
     ctaContact: 'Contactar',
     // TODO: cuatro cifras que te representen
@@ -196,7 +205,7 @@ export const es: Content = {
       comment: '// Perfil del candidato',
       variable: 'candidato',
       fields: [
-        { key: 'nombre', value: 'Lorem Ipsum' },
+        { key: 'nombre', value: 'Oscar Llorens' },
         { key: 'rol', value: 'Desarrollador .NET' },
         { key: 'stack', value: ['C#', '.NET', 'SQL Server', 'Azure'] },
         { key: 'idiomas', value: ['Español', 'Inglés'] },
@@ -217,28 +226,29 @@ export const es: Content = {
         badge: 'Fuera del teclado',
         aside: 'Aficiones',
         title: 'Lo que me mueve',
-        intro: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit:',
-        footer: 'Lorem ipsum dolor sit',
-        footerStrong: 'Lorem ipsum',
+        intro: 'Algunos de mis hobbies para desconectar:',
+        footer: 'Algunas de mis aficiones.',
+        footerStrong: 'Hobbies',
       },
       stack: {
         badge: 'Tecnologías',
         aside: 'Usadas en producción',
         title: 'Mi stack',
-        intro: 'Herramientas con las que construyo aplicaciones de principio a fin:',
+        intro: 'Herramientas con las que he trabajado:',
         footer: 'Aprendiendo siempre',
-        footerStrong: 'Ahora mismo: Lorem ipsum', // TODO: qué estás aprendiendo
+        footerStrong: 'Hard Skills', // TODO: qué estás aprendiendo
       },
       why: {
         badge: 'Por qué yo',
         aside: 'En resumen',
         title: 'Lo que aporto a un equipo',
-        intro: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit:',
+        intro: 'Algunas de mis cualidades como jugador de equipo:',
         // TODO: tres o cuatro puntos fuertes con un ejemplo concreto
         points: [
-          { title: 'Experiencia en producción:', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
-          { title: 'Lorem ipsum:', text: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' },
-          { title: 'Dolor sit amet:', text: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco.' },
+          { title: 'Experiencia como desarrollador:', text: 'Tengo experiencia de más de dos años como desarrollador.' },
+          { title: 'Ganas de ayudar y aprender:', text: 'Aporto entusiasmo y compromiso para ayudar y aprender constantemente.' },
+          { title: 'Gran capacidad de adaptación:', text: 'Cuento con una gran capacidad de adaptación a nuevos entornos y tecnologías.' },
+          { title: 'Autonomía:', text: 'Una vez dada una tarea, soy capaz de gestionarla de forma independiente y de sacarme las castañas del fuego.' },
         ],
         cta: 'Hablemos',
       },
@@ -270,7 +280,7 @@ export const es: Content = {
       // TODO: premios, certificaciones, notas, contribuciones... o borra la sección
       items: [
         { icon: 'award', tone: 'cyan', label: 'Premio', value: 'Lorem', title: 'Lorem ipsum 2025', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', foot: 'Lorem', footStrong: 'Ipsum' },
-        { icon: 'graduation', tone: 'indigo', label: 'Expediente', value: '0,0', title: 'Nota media', text: 'Sed do eiusmod tempor incididunt ut labore et dolore.', foot: 'Lorem', footStrong: 'Ipsum' },
+        { icon: 'graduation', tone: 'indigo', label: 'Expediente', value: '6,5', title: 'Nota media', text: 'Sed do eiusmod tempor incididunt ut labore et dolore.', foot: 'Lorem', footStrong: 'Ipsum' },
         { icon: 'file', tone: 'fuchsia', label: 'Certificación', value: 'Lorem', title: 'Lorem ipsum dolor', text: 'Ut enim ad minim veniam, quis nostrud exercitation.', foot: 'Lorem', footStrong: 'Ipsum' },
         { icon: 'github', tone: 'emerald', label: 'Código abierto', value: '0+', title: 'Contribuciones', text: 'Duis aute irure dolor in reprehenderit in voluptate.', foot: 'Lorem', footStrong: 'Ipsum' },
       ],
@@ -290,12 +300,12 @@ export const es: Content = {
     titleAccent: 'código',
     // TODO: presentación más extensa
     intro:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.',
+      'Soy un estudiante de Ingeniería Informática de 25 años con más de dos años de experiencia como desarrollador. Me encanta la tecnología y aprender cosas nuevas. También soy un apasionado del baloncesto y de las atividades al aire libre.',
     stats: [
       { label: 'Formación', value: 'Ing. Informática', note: 'Fin en 2027', tone: 'indigo' },
       { label: 'Experiencia', value: '2+ años', note: '.NET y SQL', tone: 'emerald' },
-      { label: 'Idiomas', value: 'ES · EN', note: 'Inglés lorem', tone: 'cyan' },
-      { label: 'Ubicación', value: 'Lorem', note: 'España', tone: 'fuchsia' },
+      { label: 'Idiomas', value: 'ES · EN', note: 'Inglés B2', tone: 'cyan' },
+      { label: 'Ubicación', value: 'Madrid', note: 'España', tone: 'fuchsia' },
     ],
     journey: { eyebrow: 'Trayectoria', title: 'Mi recorrido', range: '2022 – 2027' },
     availability: {
@@ -303,18 +313,18 @@ export const es: Content = {
       title: 'Disponibilidad',
       // TODO: qué tipo de beca o puesto buscas y cuándo
       items: [
-        { title: 'Becas internacionales', tag: '2027', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.' },
-        { title: 'Prácticas o primer empleo', tag: 'Lorem', text: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.' },
+        { title: 'Becas internacionales', tag: '2027', text: 'Busco prácticas internacionales en verano o navidades.' },
+        //{ title: 'Prácticas o primer empleo', tag: 'Lorem', text: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.' },
       ],
       placesLabel: 'Destinos de interés',
-      places: ['Lorem', 'Ipsum', 'Dolor', 'Remoto'],
-      footerTitle: 'Lorem ipsum dolor',
-      footerText: 'Sit amet consectetur',
+      places: ['San Francisco', 'San Rafael', 'Los Ángeles', 'Remoto'],
+      footerTitle: 'San Francisco',
+      footerText: 'Destino favorito',
     },
     beyond: {
       eyebrow: 'Fuera del código',
       title: 'Más allá del IDE',
-      intro: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
+      intro: '',
     },
     stack: { eyebrow: 'Habilidades', title: 'Tecnologías', aside: 'Probadas en proyectos reales' },
     cta: {
@@ -327,12 +337,12 @@ export const es: Content = {
   // ---------- PÁGINA DE CONTACTO ----------
   contact: {
     eyebrow: 'Contacto',
-    title: 'Hablemos de',
-    titleAccent: 'tu proyecto',
-    intro: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Escríbeme si quieres hablar de una beca, unas prácticas o un proyecto.',
+    title: 'Si quieres saber más de mí',
+    titleAccent: 'escríbeme',
+    intro: 'Si quieres saber más de mi perfil, hablar de un proyecto o de una beca, escríbeme y te responderé en menos de 24 h.',
     meta: [
       { icon: 'clock', text: 'Respondo en menos de 24 h' },
-      { icon: 'map-pin', text: 'Lorem, España · Remoto' }, // TODO
+      { icon: 'map-pin', text: 'Madrid, España · Remoto' },
       { icon: 'globe', text: 'Español e inglés' },
     ],
     direct: {
@@ -342,8 +352,8 @@ export const es: Content = {
       inboxLabel: 'Correo',
     },
     tiles: [
-      { icon: 'calendar', label: 'Disponibilidad', value: 'Lorem 2027', note: 'Lorem ipsum' },
-      { icon: 'map-pin', label: 'Ubicación', value: 'Lorem', note: 'Abierto a trasladarme' },
+      { icon: 'calendar', label: 'Disponibilidad', value: '2027', note: 'En junio me gradúo' },
+      { icon: 'map-pin', label: 'Ubicación', value: 'Madrid', note: 'Abierto a trasladarme' },
       { icon: 'clock', label: 'Zona horaria', value: 'CET (UTC+1)', note: 'Horario flexible' },
     ],
     profiles: { title: 'Perfiles', aside: 'En la red' },
@@ -352,6 +362,7 @@ export const es: Content = {
 
   footer: {
     tagline: 'Desarrollador .NET · Estudiante de Ingeniería Informática',
-    note: 'Hecho con Astro y publicado en GitHub Pages.',
+    note: '',
+    //note: 'Hecho con Astro y publicado en GitHub Pages.',
   },
 };
