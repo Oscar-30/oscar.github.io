@@ -13,5 +13,17 @@ export const routes: Record<PageKey, Record<Lang, string>> = {
   contact: { es: '/contacto/', en: '/en/contact/' },
 };
 
-// Orden en el que aparecen en el menú
-export const navOrder: PageKey[] = ['home', 'projects', 'about', 'contact'];
+// ------------------------------------------------------------
+// PÁGINAS OCULTAS
+// Las páginas de esta lista desaparecen del menú y de los enlaces,
+// y su URL redirige a Inicio. El código y los datos siguen intactos.
+// Para volver a mostrar Proyectos, deja la lista vacía: []
+// ------------------------------------------------------------
+export const hiddenPages: PageKey[] = ['projects'];
+
+export function isVisible(page: PageKey): boolean {
+  return !hiddenPages.includes(page);
+}
+
+// Orden en el que aparecen en el menú (sin las páginas ocultas)
+export const navOrder: PageKey[] = (['home', 'projects', 'about', 'contact'] as PageKey[]).filter(isVisible);

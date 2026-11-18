@@ -20,7 +20,7 @@ export const profile = {
   // TODO: tus perfiles. Borra los que no uses o añade otros
   // (el icono debe ser uno de los nombres de src/components/ui/icons.ts).
   links: [
-    { name: 'GitHub', handle: '@tu-usuario', url: 'https://github.com/tu-usuario', icon: 'github' },
+    //{ name: 'GitHub', handle: '@tu-usuario', url: 'https://github.com/tu-usuario', icon: 'github' },
     { name: 'LinkedIn', handle: '/in/oscar-josé-llorens-rosillo', url: 'https://www.linkedin.com/in/oscar-jos%C3%A9-llorens-rosillo-995425266', icon: 'linkedin' },
   ] satisfies { name: string; handle: string; url: string; icon: IconName }[],
 };

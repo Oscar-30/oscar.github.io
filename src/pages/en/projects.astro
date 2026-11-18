@@ -1,6 +1,12 @@
 ---
 // Page in English → see src/data/routes.ts
+import { routes, isVisible } from '../../data/routes';
 import ProjectsView from '../../views/ProjectsView.astro';
+
+// Si la página está oculta (ver hiddenPages en routes.ts), redirige a Inicio
+if (!isVisible('projects')) {
+  return Astro.redirect(routes.home.en);
+}
 ---
 
 <ProjectsView lang="en" />

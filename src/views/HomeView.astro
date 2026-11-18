@@ -3,6 +3,7 @@
 // PÁGINA DE INICIO
 // La usan src/pages/index.astro (español) y src/pages/en/index.astro.
 // Secciones: portada, bento, proyectos y llamada a la acción.
+// Las partes de proyectos se ocultan con hiddenPages (src/data/routes.ts).
 // ============================================================
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/ui/Icon.astro';
@@ -12,7 +13,7 @@ import SkillMatrix from '../components/sections/SkillMatrix.astro';
 import CtaBanner from '../components/sections/CtaBanner.astro';
 import { getContent } from '../data';
 import { profile } from '../data/profile';
-import { routes } from '../data/routes';
+import { routes, isVisible } from '../data/routes';
 import type { Lang } from '../data/types';
 
 interface Props {
@@ -27,7 +28,11 @@ const h = t.home;
 const featured = t.projects.find((p) => p.featured) ?? t.projects[0];
 const others = t.projects.filter((p) => p !== featured).slice(0, 3);
 
-const github = profile.links.find((link) => link.icon === 'github');
+const github = profile.links.find((link) => link.url.includes('github.com'));
+
+// false cuando la página Proyectos está oculta (hiddenPages en routes.ts):
+// entonces se ocultan también el botón, la tarjeta destacada y la galería.
+const showProjects = isVisible('projects');
 ---
 
 <BaseLayout lang={lang} page="home">
@@ -47,10 +52,13 @@ const github = profile.links.find((link) => link.icon === 'github');
       <p class="hero__intro">{h.intro}</p>
 
       <div class="hero__actions">
-        <a class="btn btn--primary" href={routes.projects[lang]}>
-          {h.ctaProjects} <Icon name="arrow-down" size={16} />
-        </a>
-        <a class="btn" href={routes.contact[lang]}>
+        {showProjects && (
+          <a class="btn btn--primary" href={routes.projects[lang]}>
+            {h.ctaProjects} <Icon name="arrow-down" size={16} />
+          </a>
+        )}
+        {/* Si no hay botón de proyectos, Contactar pasa a ser el botón principal */}
+        <a class:list={['btn', !showProjects && 'btn--primary']} href={routes.contact[lang]}>
           <Icon name="mail" size={17} class="hero__cyan" /> {h.ctaContact}
         </a>
         {github && (
@@ -114,7 +122,9 @@ const github = profile.links.find((link) => link.icon === 'github');
 
     <div class="bento">
       <!-- 1. Proyecto destacado -->
-      <ProjectCard project={featured} lang={lang} variant="featured" badge={h.bento.featuredBadge} class="bento__wide" />
+      {showProjects && (
+        <ProjectCard project={featured} lang={lang} variant="featured" badge={h.bento.featuredBadge} class="bento__wide" />
+      )}
 
       <!-- 2. Aficiones -->
       <article class="card bento__narrow bento-card">
@@ -157,8 +167,8 @@ const github = profile.links.find((link) => link.icon === 'github');
         </p>
       </article>
 
-      <!-- 4. Por qué yo -->
-      <article class="card bento__narrow bento-card">
+      <!-- 4. Por qué yo (ocupa todo el ancho si no está la tarjeta de proyecto) -->
+      <article class:list={['card', 'bento-card', showProjects ? 'bento__narrow' : 'bento__full']}>
         <div class="bento-card__head">
           <span class="pill pill--emerald"><Icon name="rocket" size={13} /> {h.bento.why.badge}</span>
           <span class="bento-card__aside">{h.bento.why.aside}</span>
@@ -180,7 +190,8 @@ const github = profile.links.find((link) => link.icon === 'github');
     </div>
   </section>
 
-  <!-- ========== PROYECTOS ========== -->
+  <!-- ========== PROYECTOS (solo si la página no está oculta) ========== -->
+  {showProjects && (
   <section class="container section">
     <div class="section-head">
       <div>
@@ -198,6 +209,7 @@ const github = profile.links.find((link) => link.icon === 'github');
       {t.labels.viewAll} <Icon name="arrow-right" size={16} />
     </a>
   </section>
+  )}
 
   <!-- ========== LLAMADA A LA ACCIÓN ========== -->
   <CtaBanner pill={h.cta.pill} title={h.cta.title} text={h.cta.text}>
@@ -381,6 +393,10 @@ const github = profile.links.find((link) => link.icon === 'github');
     .bento { grid-template-columns: repeat(12, 1fr); }
     .bento :global(.bento__wide) { grid-column: span 7; }
     .bento :global(.bento__narrow) { grid-column: span 5; }
+    .bento :global(.bento__full) { grid-column: 1 / -1; }
+    /* A todo el ancho, los puntos fuertes se reparten en dos columnas */
+    .bento :global(.bento__full) .points { grid-template-columns: repeat(2, 1fr); gap: 1rem 2rem; }
+    .bento :global(.bento__full) .why__cta { width: auto; align-self: flex-start; padding-inline: 2rem; }
   }
 
   .bento-card { display: flex; flex-direction: column; }
